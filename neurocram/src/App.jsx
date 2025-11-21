@@ -1,5 +1,8 @@
 import { useExamState } from './hooks/useExamState';
 import InputForm from './components/InputForm';
+import CramHeatMap from './components/CramHeatMap';
+import StressGauge from './components/StressGauge';
+import BrainEnergyGauge from './components/BrainEnergyGauge';
 
 function App() {
   const { examData, generatedPlan, generatePlan, updateSubject, addSubject, removeSubject, updateGlobal } = useExamState();
@@ -38,31 +41,9 @@ function App() {
       {/* Modules Grid – Conditional Render */}
       {generatedPlan && (
         <section className="grid grid-cols-1 md:grid-cols-3 gap-8 p-8 max-w-7xl mx-auto">
-          <div className="bg-neuro-gray p-6 rounded-lg border border-neuro-neon/30">
-            <h3 className="text-xl font-bold text-neuro-neon mb-4">CramHeat Map</h3>
-            <p className="text-gray-300 mb-2">Highest Urgency: {Math.max(...generatedPlan.urgencyScores).toFixed(1)}</p>
-            <div className="space-y-1">
-              {examData.subjects.map((sub, i) => (
-                <div key={i} className="flex justify-between text-sm">
-                  <span>{sub.name}</span>
-                  <span className="text-neuro-neon">{generatedPlan.urgencyScores[i]?.toFixed(1)}</span>
-                </div>
-              ))}
-            </div>
-            {/* Phase 4: Real chart */}
-          </div>
-          <div className="bg-neuro-gray p-6 rounded-lg border border-neuro-magenta/30">
-            <h3 className="text-xl font-bold text-neuro-magenta mb-4">Stress Prediction</h3>
-            <p className="text-gray-300">Level: {Math.min(100, generatedPlan.totalUrgency * 5).toFixed(0)}%</p>
-            <p className="text-sm text-gray-500 mt-2">{generatedPlan.totalUrgency > 15 ? 'High: Insert breaks.' : 'Manageable: Steady pace.'}</p>
-            {/* Phase 4: Gauge */}
-          </div>
-          <div className="bg-neuro-gray p-6 rounded-lg border border-neuro-neon/30">
-            <h3 className="text-xl font-bold text-neuro-neon mb-4">BrainEnergy Gauge</h3>
-            <p className="text-gray-300">Burnout Risk: Low in {examData.daysLeft} days</p>
-            <p className="text-sm text-gray-500 mt-2">Peak: {examData.dailyHours > 6 ? 'Afternoons' : 'Mornings'}</p>
-            {/* Phase 4: Timeline */}
-          </div>
+          <CramHeatMap subjectsWithUrgency={generatedPlan.subjectsWithUrgency || []} />
+          <StressGauge stressLevel={generatedPlan.stressLevel || 0} />
+          <BrainEnergyGauge energyWindows={generatedPlan.energyWindows || []} daysLeft={examData.daysLeft} />
         </section>
       )}
 
