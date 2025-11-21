@@ -6,6 +6,11 @@ import StressGauge from './components/StressGauge';
 import BrainEnergyGauge from './components/BrainEnergyGauge';
 import AnimatedBackground from './components/AnimatedBackground';
 
+import Footer from './components/Footer';
+
+
+
+
 function App() {
   const { examData, generatedPlan, generatePlan, updateSubject, addSubject, removeSubject, updateGlobal } = useExamState();
 
