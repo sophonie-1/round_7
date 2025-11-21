@@ -53,3 +53,14 @@ html {
 .slider::-moz-range-track {
     background: #1A1A1A;
 }
+
+
+/* Motion-safe for reduced animations on low-power devices */
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
