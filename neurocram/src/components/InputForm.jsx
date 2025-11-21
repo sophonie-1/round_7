@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { motion } from 'framer-motion';
 
 const SubjectInput = ({ subject, index, onUpdate, onRemove }) => {
   return (
@@ -93,13 +94,20 @@ const InputForm = ({ examData, updateSubject, addSubject, removeSubject, updateG
           <p className="text-gray-400 mb-4">Add your first subject to start.</p>
         )}
         {examData.subjects.map((subject, index) => (
-          <SubjectInput
-            key={index}
-            subject={subject}
-            index={index}
-            onUpdate={updateSubject}
-            onRemove={removeSubject}
-          />
+          <motion.div
+            key={subject.name || index}  // Stable key for smooth animations
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -50 }}
+            transition={{ duration: 0.3 }}
+          >
+            <SubjectInput
+              subject={subject}
+              index={index}
+              onUpdate={updateSubject}
+              onRemove={removeSubject}
+            />
+          </motion.div>
         ))}
         <div className="flex gap-2">
           <input
@@ -109,13 +117,15 @@ const InputForm = ({ examData, updateSubject, addSubject, removeSubject, updateG
             onChange={(e) => setNewSubjectName(e.target.value)}
             className="flex-1 p-3 bg-neuro-gray rounded border border-neuro-neon text-white focus:border-neuro-magenta focus:outline-none"
           />
-          <button
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             onClick={handleAddSubject}
             disabled={!newSubjectName.trim()}
             className="px-6 py-3 bg-neuro-neon text-neuro-dark rounded font-bold hover:bg-neuro-magenta disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             Add
-          </button>
+          </motion.button>
         </div>
       </div>
     </div>
