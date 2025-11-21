@@ -15,3 +15,41 @@ body {
 html {
     scroll-behavior: smooth;
 }
+
+
+/* Neon shadow for buttons */
+
+.shadow-neon {
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+}
+
+
+/* Custom slider styles for mission-control feel */
+
+.slider::-webkit-slider-thumb {
+    appearance: none;
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    background: #00FFFF;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+}
+
+.slider::-moz-range-thumb {
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    background: #00FFFF;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+}
+
+.slider::-webkit-slider-runnable-track {
+    background: #1A1A1A;
+}
+
+.slider::-moz-range-track {
+    background: #1A1A1A;
+}

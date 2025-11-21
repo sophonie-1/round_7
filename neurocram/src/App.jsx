@@ -1,49 +1,94 @@
-import { useState } from 'react';
+import { useExamState } from './hooks/useExamState';
+import InputForm from './components/InputForm';
 
 function App() {
-  const [planGenerated, setPlanGenerated] = useState(false);  // For CTA toggle
+  const { examData, generatedPlan, generatePlan, updateSubject, addSubject, removeSubject, updateGlobal } = useExamState();
 
   return (
     <div className="min-h-screen bg-neuro-dark text-white overflow-x-hidden">
       {/* Hero Section */}
       <section className="h-screen flex flex-col justify-center items-center p-8 text-center bg-gradient-to-b from-neuro-dark to-neuro-gray">
-        <h1 className="text-6xl md:text-8xl font-neuro font-bold text-neuro-neon mb-4">
+        <h1 className="text-6xl md:text-8xl font-neuro font-bold text-neuro-neon mb-4 animate-pulse">
           NEUROCRAM
         </h1>
         <p className="text-xl md:text-2xl text-gray-300 mb-8 max-w-2xl">
           The Exam Intelligence Console. Rewrite the science of last-minute studying.
         </p>
-        {/* Input Form Placeholder – Phase 3 */}
-        <div className="mb-8 p-6 bg-neuro-gray rounded-lg shadow-lg">
-          <p>[Inputs: Subjects, Days, etc. – Coming Soon]</p>
-        </div>
+        {/* Input Form */}
+        <InputForm
+          examData={examData}
+          updateSubject={updateSubject}
+          addSubject={addSubject}
+          removeSubject={removeSubject}
+          updateGlobal={updateGlobal}
+        />
         <button
-          onClick={() => setPlanGenerated(!planGenerated)}
-          className="px-8 py-4 bg-neuro-neon text-neuro-dark text-lg font-bold rounded-full hover:bg-neuro-magenta transition-all duration-300 shadow-neon"
+          onClick={generatePlan}
+          disabled={examData.subjects.length === 0}
+          className={`px-8 py-4 text-lg font-bold rounded-full transition-all duration-300 mt-8 shadow-neon ${
+            examData.subjects.length === 0
+              ? 'bg-gray-600 cursor-not-allowed opacity-50'
+              : 'bg-neuro-neon text-neuro-dark hover:bg-neuro-magenta hover:shadow-magenta'
+          }`}
         >
-          {planGenerated ? 'Regenerate Plan' : 'Generate Plan'}
+          {examData.subjects.length === 0 ? 'Add Subjects First' : 'Generate Plan'}
         </button>
       </section>
 
       {/* Modules Grid – Conditional Render */}
-      {planGenerated && (
+      {generatedPlan && (
         <section className="grid grid-cols-1 md:grid-cols-3 gap-8 p-8 max-w-7xl mx-auto">
-          <div className="bg-neuro-gray p-6 rounded-lg">[Module 1: CramHeat Map]</div>
-          <div className="bg-neuro-gray p-6 rounded-lg">[Module 2: Stress Prediction]</div>
-          <div className="bg-neuro-gray p-6 rounded-lg">[Module 3: BrainEnergy Gauge]</div>
+          <div className="bg-neuro-gray p-6 rounded-lg border border-neuro-neon/30">
+            <h3 className="text-xl font-bold text-neuro-neon mb-4">CramHeat Map</h3>
+            <p className="text-gray-300 mb-2">Highest Urgency: {Math.max(...generatedPlan.urgencyScores).toFixed(1)}</p>
+            <div className="space-y-1">
+              {examData.subjects.map((sub, i) => (
+                <div key={i} className="flex justify-between text-sm">
+                  <span>{sub.name}</span>
+                  <span className="text-neuro-neon">{generatedPlan.urgencyScores[i]?.toFixed(1)}</span>
+                </div>
+              ))}
+            </div>
+            {/* Phase 4: Real chart */}
+          </div>
+          <div className="bg-neuro-gray p-6 rounded-lg border border-neuro-magenta/30">
+            <h3 className="text-xl font-bold text-neuro-magenta mb-4">Stress Prediction</h3>
+            <p className="text-gray-300">Level: {Math.min(100, generatedPlan.totalUrgency * 5).toFixed(0)}%</p>
+            <p className="text-sm text-gray-500 mt-2">{generatedPlan.totalUrgency > 15 ? 'High: Insert breaks.' : 'Manageable: Steady pace.'}</p>
+            {/* Phase 4: Gauge */}
+          </div>
+          <div className="bg-neuro-gray p-6 rounded-lg border border-neuro-neon/30">
+            <h3 className="text-xl font-bold text-neuro-neon mb-4">BrainEnergy Gauge</h3>
+            <p className="text-gray-300">Burnout Risk: Low in {examData.daysLeft} days</p>
+            <p className="text-sm text-gray-500 mt-2">Peak: {examData.dailyHours > 6 ? 'Afternoons' : 'Mornings'}</p>
+            {/* Phase 4: Timeline */}
+          </div>
         </section>
       )}
 
       {/* Plan Output */}
-      {planGenerated && (
+      {generatedPlan && (
         <section className="p-8 bg-neuro-gray">
           <h2 className="text-3xl font-bold text-neuro-neon mb-4">Your Mission Plan</h2>
-          <ul className="space-y-2">[Dynamic Plan List – Coming Soon]</ul>
+          <div className="space-y-4 max-w-4xl mx-auto">
+            <p className="text-lg text-gray-300"><strong>Overview:</strong> {generatedPlan.dailySchedule}</p>
+            <ul className="space-y-2">
+              {examData.subjects.map((sub, i) => (
+                <li key={i} className="flex justify-between p-3 bg-neuro-dark rounded">
+                  <span className="font-bold">{sub.name}</span>
+                  <div className="text-right">
+                    <span className="block text-sm text-gray-400">Urgency: {generatedPlan.urgencyScores[i]?.toFixed(1)}</span>
+                    <span className="text-neuro-neon">Focus: {((sub.difficulty - sub.confidence) * 10).toFixed(0)}%</span>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
         </section>
       )}
 
       {/* Easter Egg Footer */}
-      <footer className="text-center py-4 text-sm text-gray-500">
+      <footer className="text-center py-4 text-sm text-gray-500 border-t border-neuro-gray">
         Hover for intel... (Phase 5)
       </footer>
     </div>
